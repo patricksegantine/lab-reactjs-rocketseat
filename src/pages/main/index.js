@@ -8,6 +8,8 @@ export default class Main extends Component {
     super();
     this.state = {
       products: [],
+      productsInfo: {},
+      page: 1,
     };
   }
 
@@ -15,14 +17,36 @@ export default class Main extends Component {
     this.fetchProducts();
   }
 
-  fetchProducts = async () => {
-    const response = await api.get("/products");
+  fetchProducts = async (page = 1) => {
+    const response = await api.get(`/products?page=${page}`);
 
-    this.setState({ products: response.data.docs });
+    const { docs, ...productsInfo } = response.data
+
+    this.setState({ products: docs, productsInfo, page });
+  }
+
+  prevPage = () => {
+    const { page, productsInfo } = this.state;
+
+    if (page === 1) return;
+
+    const pageNumber = page - 1;
+
+    this.fetchProducts(pageNumber);
+  }
+
+  nextPage = () => {
+    const { page, productsInfo } = this.state;
+
+    if (page === productsInfo.pages) return;
+
+    const pageNumber = page + 1;
+
+    this.fetchProducts(pageNumber);
   }
 
   render() {
-    const { products } = this.state;
+    const { products, productsInfo, page } = this.state;
 
     return (
       <div className="product-list">
@@ -34,6 +58,14 @@ export default class Main extends Component {
             <a href="">Adicionar</a>
           </article>
         ))}
+        <div className="actions">
+          <button disabled={page === 1} onClick={this.prevPage}>
+            Anterior
+          </button>
+          <button disabled={page === productsInfo.page} onClick={this.nextPage}>
+            Próximo
+          </button>
+        </div>
       </div>
     );
   }
