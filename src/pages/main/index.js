@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../../services/api';
 
 import './styles.css';
@@ -26,7 +27,7 @@ export default class Main extends Component {
   }
 
   prevPage = () => {
-    const { page, productsInfo } = this.state;
+    const { page } = this.state;
 
     if (page === 1) return;
 
@@ -55,14 +56,14 @@ export default class Main extends Component {
             <strong>{product.title}</strong>
             <p>{product.description}</p>
 
-            <a href="">Adicionar</a>
+            <Link to={`/products/${product._id}`}>Adicionar</Link>
           </article>
         ))}
         <div className="actions">
           <button disabled={page === 1} onClick={this.prevPage}>
             Anterior
           </button>
-          <button disabled={page === productsInfo.page} onClick={this.nextPage}>
+          <button disabled={page === productsInfo.pages} onClick={this.nextPage}>
             Próximo
           </button>
         </div>
